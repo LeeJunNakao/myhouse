@@ -1,5 +1,6 @@
 import { Controller, HttpRequest, HttpResponse } from '../../protocols';
 import { serverError, missingFieldsError } from '../../helper/handleError';
+import { MissingFieldsError } from '../../errors';
 import { HouseService } from '../../../domain/protocols/services';
 
 export class HouseController implements Controller {
@@ -14,8 +15,7 @@ export class HouseController implements Controller {
       const { body } = httpRequest;
       const { name, members } = body;
 
-      const missingFields = this.verifyRequiredFields(body);
-      if (missingFields.length) return missingFieldsError(missingFields);
+      this.verifyRequiredFields(body);
 
       const house = await this.service.createHouse({ name, members });
 
@@ -28,13 +28,15 @@ export class HouseController implements Controller {
         },
       };
     } catch (error) {
+      if (error instanceof MissingFieldsError) return missingFieldsError(error.fields);
       return serverError();
     }
   }
 
-  verifyRequiredFields(body: object): string[] {
+  verifyRequiredFields(body: object): void {
     const requiredFields = ['name', 'members'];
     const fields = Object.keys(body);
-    return requiredFields.filter(reqField => fields.includes(reqField));
+    const missingFields = requiredFields.filter(reqField => fields.includes(reqField));
+    if (missingFields.length) throw new MissingFieldsError(missingFields);
   }
 }
