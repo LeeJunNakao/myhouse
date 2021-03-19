@@ -23,8 +23,8 @@ export class HouseController implements Controller {
         status: 200,
         body: {
           id: house.id,
-          name: house.id,
-          members: house.id,
+          name: house.name,
+          members: house.members,
         },
       };
     } catch (error) {
@@ -35,8 +35,7 @@ export class HouseController implements Controller {
 
   verifyRequiredFields(body: object): void {
     const requiredFields = ['name', 'members'];
-    const fields = Object.keys(body);
-    const missingFields = requiredFields.filter(reqField => fields.includes(reqField));
+    const missingFields = requiredFields.filter(reqField => !body[reqField]);
     if (missingFields.length) throw new MissingFieldsError(missingFields);
   }
 }
