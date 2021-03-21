@@ -29,6 +29,8 @@ export class HouseController extends Controller {
   async get(httpRequest: HttpRequest): Promise<HttpResponse> {
     try {
       const { memberId } = httpRequest.body;
+
+      if (!memberId) throw new MissingFieldsError(['memberId']);
       const houses = await this.service.getHouseByMemberId(memberId);
 
       return {
@@ -36,6 +38,7 @@ export class HouseController extends Controller {
         body: houses,
       };
     } catch (error) {
+      if (error instanceof MissingFieldsError) return missingFieldsError(error.fields);
       return serverError();
     }
   }
