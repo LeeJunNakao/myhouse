@@ -1,14 +1,14 @@
-import { Entity, Column, PrimaryGeneratedColumn } from "typeorm";
+import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 import { House as IHouse } from '../../../../../domain/House';
 
 @Entity()
 export class House implements IHouse {
-    @PrimaryGeneratedColumn()
-    id: number;
+  @PrimaryGeneratedColumn()
+  id: number;
 
-    @Column("varchar", { length: 60 })
-    name: string;
+  @Column('varchar', { length: 60 })
+  name: string;
 
-    @Column("int", { array: true })
-    members: number[];
+  @Column('int', { array: true })
+  members: number[];
 }
