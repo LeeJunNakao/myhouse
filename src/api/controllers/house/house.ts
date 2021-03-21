@@ -12,6 +12,34 @@ export class HouseController extends Controller {
     this.service = service;
   }
 
+  async update(httpRequest: HttpRequest): Promise<HttpResponse> {
+    try {
+      const { id, name, members } = httpRequest.body;
+      const house = await this.service.updateHouse({ id, name, members });
+
+      return {
+        status: 200,
+        body: house,
+      };
+    } catch (error) {
+      return serverError();
+    }
+  }
+
+  async get(httpRequest: HttpRequest): Promise<HttpResponse> {
+    try {
+      const { memberId } = httpRequest.body;
+      const houses = await this.service.getHouseByMemberId(memberId);
+
+      return {
+        status: 200,
+        body: houses,
+      };
+    } catch (error) {
+      return serverError();
+    }
+  }
+
   async post(httpRequest: HttpRequest): Promise<HttpResponse> {
     try {
       const { body } = httpRequest;
