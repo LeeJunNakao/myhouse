@@ -8,5 +8,8 @@ export interface HttpResponse {
 }
 
 export interface Controller {
-  handle: (httpRequest: HttpRequest) => Promise<HttpResponse>,
+  post: (httpRequest: HttpRequest) => Promise<HttpResponse>,
+  get: (httpRequest: HttpRequest) => Promise<HttpResponse>,
+  put: (httpRequest: HttpRequest) => Promise<HttpResponse>,
+  delete: (httpRequest: HttpRequest) => Promise<HttpResponse>,
 }

@@ -1,16 +1,18 @@
-import { Controller, HttpRequest, HttpResponse } from '../../protocols';
+import Controller from '../GenericController';
+import { HttpRequest, HttpResponse } from '../../protocols';
 import { serverError, missingFieldsError } from '../../helper/handleError';
 import { MissingFieldsError } from '../../errors';
 import { HouseService } from '../../../domain/protocols/services';
 
-export class HouseController implements Controller {
+export class HouseController extends Controller {
   private readonly service: HouseService;
 
   constructor(service: HouseService) {
+    super();
     this.service = service;
   }
 
-  async handle(httpRequest: HttpRequest): Promise<HttpResponse> {
+  async post(httpRequest: HttpRequest): Promise<HttpResponse> {
     try {
       const { body } = httpRequest;
       const { name, members } = body;
@@ -33,7 +35,7 @@ export class HouseController implements Controller {
     }
   }
 
-  verifyRequiredFields(body: object): void {
+  private verifyRequiredFields(body: object): void {
     const requiredFields = ['name', 'members'];
     const missingFields = requiredFields.filter(reqField => !body[reqField]);
     if (missingFields.length) throw new MissingFieldsError(missingFields);

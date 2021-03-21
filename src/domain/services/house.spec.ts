@@ -1,7 +1,6 @@
 import { HouseService } from './house';
 import { HouseRepository as IHouseService } from '../../database/protocols';
 import { CreateHouseDto, House } from '../House';
-import { create } from 'node:domain';
 
 const createHouse: CreateHouseDto = {
     name: 'My House',
@@ -16,6 +15,14 @@ interface SutTypes {
 class HouseRepository implements IHouseService {
     async create(dto: CreateHouseDto): Promise<House> {
         return new Promise(resolve => resolve({ id: 10, ...dto }))
+    }
+
+    async get(id: string | number): Promise<House[]> {
+        return new Promise(resolve => resolve([{id, ...createHouse}]))
+    }
+
+    async update(dto: House): Promise<House> {
+        return new Promise(resolve => resolve(dto));
     }
 }
 
