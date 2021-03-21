@@ -99,3 +99,50 @@ describe('House Controller Unit - GET', () => {
     expect(response.body).toEqual([{ id: 10, ...house }]);
   });
 });
+
+describe('House Controller Unit - PUT', () => {
+  const updatedHouse = {
+    id: 10,
+    name: 'another name',
+    members: [5, 17, 33],
+  };
+
+  test('Should return 400 if id is not provided', async() => {
+    const { sut } = makeSut();
+    const response = await sut.put({ body: { ...updatedHouse, id: '' } });
+    expect(response).toEqual(missingFieldsError(['id']));
+  });
+
+  test('Should return 400 if name is not provided', async() => {
+    const { sut } = makeSut();
+    const response = await sut.put({ body: { ...updatedHouse, name: '' } });
+    expect(response).toEqual(missingFieldsError(['name']));
+  });
+
+  test('Should return 400 if membersId is not provided', async() => {
+    const { sut } = makeSut();
+    const response = await sut.put({ body: { ...updatedHouse, members: '' } });
+    expect(response).toEqual(missingFieldsError(['members']));
+  });
+
+  test('Should return 500 if service throws', async() => {
+    const { sut, serviceSut } = makeSut();
+    jest.spyOn(serviceSut, 'updateHouse').mockReturnValueOnce(new Promise((resolve, reject) => reject(new Error())));
+    const response = await sut.put({ body: updatedHouse });
+    expect(response).toEqual(serverError());
+  });
+
+  test('Should call updateHouse with correct data', async() => {
+    const { sut, serviceSut } = makeSut();
+    const serviceSpy = jest.spyOn(serviceSut, 'updateHouse');
+    await sut.put({ body: updatedHouse });
+    expect(serviceSpy).toBeCalledWith(updatedHouse);
+  });
+
+  test('Should return 200 if valid data is provided', async() => {
+    const { sut } = makeSut();
+    const response = await sut.put({ body: updatedHouse });
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual(updatedHouse);
+  });
+});

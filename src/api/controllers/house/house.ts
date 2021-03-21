@@ -12,9 +12,11 @@ export class HouseController extends Controller {
     this.service = service;
   }
 
-  async update(httpRequest: HttpRequest): Promise<HttpResponse> {
+  async put(httpRequest: HttpRequest): Promise<HttpResponse> {
     try {
-      const { id, name, members } = httpRequest.body;
+      const { body } = httpRequest;
+      const { id, name, members } = body;
+      this.verifyRequiredFields(body, ['id', 'name', 'members']);
       const house = await this.service.updateHouse({ id, name, members });
 
       return {
@@ -22,6 +24,7 @@ export class HouseController extends Controller {
         body: house,
       };
     } catch (error) {
+      if (error instanceof MissingFieldsError) return missingFieldsError(error.fields);
       return serverError();
     }
   }
@@ -48,7 +51,7 @@ export class HouseController extends Controller {
       const { body } = httpRequest;
       const { name, members } = body;
 
-      this.verifyRequiredFields(body);
+      this.verifyRequiredFields(body, ['name', 'members']);
 
       const house = await this.service.createHouse({ name, members });
 
@@ -66,8 +69,7 @@ export class HouseController extends Controller {
     }
   }
 
-  private verifyRequiredFields(body: object): void {
-    const requiredFields = ['name', 'members'];
+  private verifyRequiredFields(body: object, requiredFields: string[]): void {
     const missingFields = requiredFields.filter(reqField => !body[reqField]);
     if (missingFields.length) throw new MissingFieldsError(missingFields);
   }
