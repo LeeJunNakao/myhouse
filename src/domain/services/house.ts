@@ -20,7 +20,7 @@ export class HouseService implements IHouseService {
   }
 
   async updateHouse(house: House): Promise<House> {
-    const result = await this.repo.update(house);
+    const result = Array.isArray(house.members) && house.members.length ? await this.repo.update(house) : await this.repo.updateName(house);
     return result;
   }
 }

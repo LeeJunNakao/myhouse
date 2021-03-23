@@ -1,5 +1,5 @@
 import { HttpResponse } from '../protocols';
-import { ServerError, MissingFieldsError } from '../errors';
+import { ServerError, MissingFieldsError, NotAuthorizedError } from '../errors';
 
 export const serverError = (): HttpResponse => ({
   status: 500,
@@ -9,4 +9,9 @@ export const serverError = (): HttpResponse => ({
 export const missingFieldsError = (fields: string[]): HttpResponse => ({
   status: 400,
   body: new MissingFieldsError(fields),
+});
+
+export const notAuthorizedError = (): HttpResponse => ({
+  status: 401,
+  body: new NotAuthorizedError(),
 });

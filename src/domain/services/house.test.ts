@@ -6,6 +6,7 @@ import { HouseService } from './house';
 const createHouseDto: CreateHouseDto = {
   name: 'Casa de alguém',
   members: [1, 2, 3],
+  userId: 10,
 };
 
 const makeSut = (): HouseService => {
@@ -26,11 +27,11 @@ describe('House Repository', () => {
 
   test('Should get houses successfully', async() => {
     const sut = makeSut();
-    const userId = 17;
-    const houseDto1 = { name: 'Casa', members: [userId, 22, 31, 39] };
+    const { userId } = createHouseDto;
+    const houseDto1 = { name: 'Casa', members: [userId, 22, 31, 39], userId };
     const houseDto2 = { name: 'Apartamento', members: [userId, 88, 185] };
-    const createdHouse1 = await sut.createHouse(houseDto1);
-    const createdHouse2 = await sut.createHouse(houseDto2);
+    const createdHouse1 = await sut.createHouse({ ...houseDto1, userId });
+    const createdHouse2 = await sut.createHouse({ ...houseDto2, userId });
     const houses = await sut.getHouseByMemberId(userId);
 
     expect(houses.length).toEqual(2);

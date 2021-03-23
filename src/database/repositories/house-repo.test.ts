@@ -5,6 +5,7 @@ import { truncateDatabase } from '../helpers/query-helper';
 const createHouseDto: CreateHouseDto = {
   name: 'Casa de alguém',
   members: [1, 2, 3],
+  userId: 10,
 };
 
 describe('House Repository', () => {
@@ -19,22 +20,24 @@ describe('House Repository', () => {
 
   test('Should insert get by id successfully', async() => {
     const repo = new HouseRepository();
-    const { id, name, members } = await repo.create(createHouseDto);
+    const { id } = await repo.create(createHouseDto);
     const house = await repo.get(createHouseDto.members[0]);
-    expect(house).toEqual([{ id, name, members }]);
+    expect(house).toEqual([{ id, ...createHouseDto }]);
   });
 
   test('Should update successfully', async() => {
     const repo = new HouseRepository();
+    const { userId } = createHouseDto;
     const { id } = await repo.create(createHouseDto);
-    const house = await repo.update({ id, name: 'Novo nome', members: [1, 2] });
-    expect(house).toEqual({ id, name: 'Novo nome', members: [1, 2] });
+    const house = await repo.update({ id, name: 'Novo nome', members: [1, 2], userId });
+    expect(house).toEqual({ id, name: 'Novo nome', members: [1, 2], userId });
   });
 
   test('Should get all houses that user owns', async() => {
     const commomMember = 1;
-    const houseDto = { name: 'Casa de Fulano', members: [commomMember, 2, 3] };
-    const houseDto2 = { name: 'Casa de Beltrano', members: [commomMember, 7, 8] };
+    const { userId } = createHouseDto;
+    const houseDto = { name: 'Casa de Fulano', members: [commomMember, 2, 3], userId };
+    const houseDto2 = { name: 'Casa de Beltrano', members: [commomMember, 7, 8], userId };
     const repo = new HouseRepository();
     const house1 = await repo.create(houseDto);
     const house2 = await repo.create(houseDto2);

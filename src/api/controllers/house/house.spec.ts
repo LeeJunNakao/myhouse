@@ -7,6 +7,7 @@ import { missingFieldsError, serverError } from '../../helper/handleError';
 const house = {
   name: 'valid_name',
   members: [5, 15],
+  userId: 5,
 };
 
 interface SutType {
@@ -16,11 +17,11 @@ interface SutType {
 
 class HouseServiceSut implements HouseService {
   async createHouse(house: CreateHouseDto): Promise<House> {
-    return await new Promise(resolve => resolve({ id: 10, name: house.name, members: house.members }));
+    return await new Promise(resolve => resolve({ id: 10, name: house.name, members: house.members, userId: house.userId }));
   }
 
   async getHouseByMemberId(memberId: number | string): Promise<House[]> {
-    return await new Promise(resolve => resolve([{ id: 10, name: house.name, members: house.members }]));
+    return await new Promise(resolve => resolve([{ id: 10, name: house.name, members: house.members, userId: house.userId }]));
   }
 
   async updateHouse(house: House): Promise<House> {
@@ -41,10 +42,11 @@ describe('House Controller Unit - POST', () => {
     expect(response).toEqual(missingFieldsError(['name']));
   });
 
-  test('Should return 400 if members is not provided', async() => {
+  test('Should return house with user as only member if members field is not provided', async() => {
     const { sut } = makeSut();
-    const response = await sut.post({ body: { ...house, members: '' } });
-    expect(response).toEqual(missingFieldsError(['members']));
+    const response = await sut.post({ body: { ...house, members: null } });
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual({ id: 10, name: house.name, members: [house.userId] });
   });
 
   test('Should return 500 if service throws', async() => {
@@ -65,36 +67,36 @@ describe('House Controller Unit - POST', () => {
     const { sut } = makeSut();
     const response = await sut.post({ body: house });
     expect(response.status).toBe(200);
-    expect(response.body).toEqual({ id: 10, ...house });
+    expect(response.body).toEqual({ id: 10, name: house.name, members: house.members });
   });
 });
 
 describe('House Controller Unit - GET', () => {
-  const memberId = 5;
+  const userId = 5;
 
-  test('Should return 400 if member id is not provided', async() => {
+  test('Should return 500 if userId is not provided', async() => {
     const { sut } = makeSut();
-    const response = await sut.get({ body: { memberId: null } });
-    expect(response).toEqual(missingFieldsError(['memberId']));
+    const response = await sut.get({ body: { userId: null } });
+    expect(response).toEqual(serverError());
   });
 
   test('Should return 500 if service throws', async() => {
     const { sut, serviceSut } = makeSut();
     jest.spyOn(serviceSut, 'getHouseByMemberId').mockReturnValueOnce(new Promise((resolve, reject) => reject(new Error())));
-    const response = await sut.get({ body: { memberId } });
+    const response = await sut.get({ body: { userId } });
     expect(response).toEqual(serverError());
   });
 
   test('Should call getHouseByMemberId with correct data', async() => {
     const { sut, serviceSut } = makeSut();
     const serviceSpy = jest.spyOn(serviceSut, 'getHouseByMemberId');
-    await sut.get({ body: { memberId } });
-    expect(serviceSpy).toBeCalledWith(memberId);
+    await sut.get({ body: { userId } });
+    expect(serviceSpy).toBeCalledWith(userId);
   });
 
   test('Should return 200 if valid data is provided', async() => {
     const { sut } = makeSut();
-    const response = await sut.get({ body: { memberId } });
+    const response = await sut.get({ body: { userId } });
     expect(response.status).toBe(200);
     expect(response.body).toEqual([{ id: 10, ...house }]);
   });
@@ -117,12 +119,6 @@ describe('House Controller Unit - PUT', () => {
     const { sut } = makeSut();
     const response = await sut.put({ body: { ...updatedHouse, name: '' } });
     expect(response).toEqual(missingFieldsError(['name']));
-  });
-
-  test('Should return 400 if membersId is not provided', async() => {
-    const { sut } = makeSut();
-    const response = await sut.put({ body: { ...updatedHouse, members: '' } });
-    expect(response).toEqual(missingFieldsError(['members']));
   });
 
   test('Should return 500 if service throws', async() => {
