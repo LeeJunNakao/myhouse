@@ -4,6 +4,8 @@ import { mountHouse } from '../controllers/house';
 
 const router = express.Router();
 
-router.all(routeAdapter(mountHouse()));
+// router.all('/', routeAdapter(mountHouse()));
+
+router.get('/', routeAdapter(mountHouse()));
 
 export default router;
