@@ -1,6 +1,6 @@
 import express from 'express';
-import { routeAdapter } from './adapter';
-import { mountHouse } from '../controllers/house';
+import { routeAdapter } from '../adapter';
+import { mountHouse } from '../../controllers/house';
 
 const router = express.Router();
 

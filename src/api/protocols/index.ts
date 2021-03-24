@@ -1,3 +1,5 @@
+export * from './utils';
+
 export interface HttpRequest {
   body: any,
 }

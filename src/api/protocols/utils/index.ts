@@ -1,0 +1,10 @@
+export interface User {
+  id: number | string,
+  name: string,
+  email: string,
+
+}
+
+export interface Jwt{
+  decode: (token: string) => User,
+}
