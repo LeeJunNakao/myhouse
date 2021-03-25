@@ -47,7 +47,6 @@ describe('House route - POST', () => {
       .expect(200)
       .then(response => {
         const { name, members } = response.body;
-        console.log(response.body);
         expect(name).toBe(houseData.name);
         expect(members).toEqual([user.id]);
       });
