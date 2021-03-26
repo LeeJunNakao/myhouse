@@ -4,11 +4,6 @@ import { User } from '../../protocols/index';
 import jwt from 'jsonwebtoken';
 import { truncateDatabase } from '../../../database/helpers/query-helper';
 
-const houseData = {
-  name: 'Casa',
-  members: [17, 3],
-};
-
 const user: User = {
   id: 17,
   name: 'Rosangela',
@@ -22,6 +17,11 @@ const invalidToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2MTU4Mzg4N
 describe('House route - POST', () => {
   beforeAll(async() => await truncateDatabase());
   afterEach(async() => await truncateDatabase());
+
+  const houseData = {
+    name: 'Casa',
+    members: [17, 3],
+  };
 
   test('Should return 401 if token is not valid', async() => {
     await request(app)
@@ -52,6 +52,21 @@ describe('House route - POST', () => {
       });
   });
 
+  test('Should create house with user as member if he is not included in payload', async() => {
+    const modifiedMembers = [1, 2, 3];
+
+    await request(app)
+      .post('/house')
+      .set('token', token)
+      .send({ ...houseData, members: modifiedMembers })
+      .expect(200)
+      .then(response => {
+        const { name, members } = response.body;
+        expect(name).toBe(houseData.name);
+        expect(members).toEqual([...modifiedMembers, user.id]);
+      });
+  });
+
   test('Should create house if all data is valid', async() => {
     await request(app)
       .post('/house')
@@ -62,6 +77,57 @@ describe('House route - POST', () => {
         const { name, members } = response.body;
         expect(name).toBe(houseData.name);
         expect(members).toEqual(houseData.members);
+      });
+  });
+});
+
+describe('House route - GET', () => {
+  const houses = [
+    {
+      name: 'Casa Principal',
+      members: [17, 3],
+    },
+    {
+      name: 'Apartamento',
+      members: [17],
+    },
+    {
+      name: 'Casa de Férias',
+      members: [5, 25, 29, 40],
+    }
+  ];
+  beforeAll(async() => await truncateDatabase());
+  afterEach(async() => await truncateDatabase());
+
+  test('Should return 200', async() => {
+    await request(app)
+      .post('/house')
+      .set('token', token)
+      .send(houses[0]);
+
+    await request(app)
+      .post('/house')
+      .set('token', token)
+      .send(houses[1]);
+
+    await request(app)
+      .post('/house')
+      .set('token', token)
+      .send(houses[2]);
+
+    await request(app)
+      .get('/house')
+      .set('token', token)
+      .then(response => {
+        const { body } = response;
+
+        const fetchedHouses = body.map(({ name, members }) => ({ name, members }));
+
+        houses.forEach(house => {
+          const userId = Number(user.id);
+          if (!house.members.includes(userId)) house.members.push(userId);
+          expect(fetchedHouses).toContainEqual(house);
+        });
       });
   });
 });
