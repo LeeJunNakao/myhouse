@@ -51,4 +51,8 @@ export class HouseRepository implements IHouseRepository {
       userId: house.userId,
     };
   }
+
+  async delete(id: string | number, userId: string | number): Promise<void> {
+    await pg.query('DELETE FROM house WHERE id = $1 and  "userId" = $2', [id, userId]);
+  }
 }

@@ -4,11 +4,11 @@ import { truncateDatabase } from '../helpers/query-helper';
 
 const createHouseDto: CreateHouseDto = {
   name: 'Casa de alguém',
-  members: [1, 2, 3],
+  members: [1, 2, 3, 10],
   userId: 10,
 };
 
-describe('House Repository', () => {
+describe('House Repository - create', () => {
   beforeAll(async() => await truncateDatabase());
   afterEach(async() => await truncateDatabase());
 
@@ -17,13 +17,11 @@ describe('House Repository', () => {
     const house = await repo.create(createHouseDto);
     expect(house).toEqual({ ...createHouseDto, id: 1 });
   });
+});
 
-  test('Should insert get by id successfully', async() => {
-    const repo = new HouseRepository();
-    const { id } = await repo.create(createHouseDto);
-    const house = await repo.get(createHouseDto.members[0]);
-    expect(house).toEqual([{ id, ...createHouseDto }]);
-  });
+describe('House Repository - update', () => {
+  beforeAll(async() => await truncateDatabase());
+  afterEach(async() => await truncateDatabase());
 
   test('Should update successfully', async() => {
     const repo = new HouseRepository();
@@ -31,6 +29,51 @@ describe('House Repository', () => {
     const { id } = await repo.create(createHouseDto);
     const house = await repo.update({ id, name: 'Novo nome', members: [1, 2], userId });
     expect(house).toEqual({ id, name: 'Novo nome', members: [1, 2], userId });
+  });
+
+  test('Should throw if a not owner tries update members', async() => {
+    const repo = new HouseRepository();
+    const { id } = await repo.create(createHouseDto);
+    const promise = repo.update({ id, name: 'Novo nome', members: [1, 2], userId: 999 });
+    await expect(promise).rejects.toThrow();
+  });
+});
+
+describe('House Repository - updateName', () => {
+  beforeAll(async() => await truncateDatabase());
+  afterEach(async() => await truncateDatabase());
+
+  test('Should update successfully', async() => {
+    const repo = new HouseRepository();
+    const createdHouse = await repo.create(createHouseDto);
+    const house = await repo.updateName({ ...createdHouse, name: 'Novo' });
+    expect(house).toEqual({ ...createdHouse, name: 'Novo' });
+  });
+
+  test('Should not alter members', async() => {
+    const repo = new HouseRepository();
+    const createdHouse = await repo.create(createHouseDto);
+    const updatedHouse = await repo.updateName({ ...createdHouse, members: [100, 200, 300] });
+    expect(updatedHouse).toEqual(createdHouse);
+  });
+
+  test('Should throw if a not member tries update name', async() => {
+    const repo = new HouseRepository();
+    const createdHouse = await repo.create(createHouseDto);
+    const promise = repo.updateName({ ...createdHouse, name: "Mom Joana's house", userId: 999 });
+    await expect(promise).rejects.toThrow();
+  });
+});
+
+describe('House Repository - get', () => {
+  beforeAll(async() => await truncateDatabase());
+  afterEach(async() => await truncateDatabase());
+
+  test('Should get by id successfully', async() => {
+    const repo = new HouseRepository();
+    const { id } = await repo.create(createHouseDto);
+    const house = await repo.get(createHouseDto.members[0]);
+    expect(house).toEqual([{ id, ...createHouseDto }]);
   });
 
   test('Should get all houses that user owns', async() => {
