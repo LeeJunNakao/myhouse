@@ -23,4 +23,8 @@ export class HouseService implements IHouseService {
     const result = Array.isArray(house.members) && house.members.length ? await this.repo.update(house) : await this.repo.updateName(house);
     return result;
   }
+
+  async deleteHouse(id: string | number, userId: string | number): Promise<void> {
+    await this.repo.delete(id, userId);
+  }
 }

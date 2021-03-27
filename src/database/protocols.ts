@@ -5,4 +5,5 @@ export interface HouseRepository {
   get: (memberId: number | string) => Promise<House[]>,
   updateName: (dto: House) => Promise<House>,
   update: (dto: House) => Promise<House>,
+  delete: (id: string | number, userId: string | number) => Promise<void>,
 }

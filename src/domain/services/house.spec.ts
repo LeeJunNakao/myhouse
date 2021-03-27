@@ -1,18 +1,19 @@
 import { HouseService } from './house';
-import { HouseRepository as IHouseService } from '../../database/protocols';
+import { HouseRepository as IHouseRepository } from '../../database/protocols';
 import { CreateHouseDto, House } from '../House';
 
 const createHouse: CreateHouseDto = {
+  userId: 1,
   name: 'My House',
   members: [2],
 };
 
 interface SutTypes {
   sut: HouseService,
-  repoSut: IHouseService,
+  repoSut: IHouseRepository,
 }
 
-class HouseRepository implements IHouseService {
+class HouseRepository implements IHouseRepository {
   async create(dto: CreateHouseDto): Promise<House> {
     return await new Promise(resolve => resolve({ id: 10, ...dto }));
   }
@@ -23,6 +24,14 @@ class HouseRepository implements IHouseService {
 
   async update(dto: House): Promise<House> {
     return await new Promise(resolve => resolve(dto));
+  }
+
+  async updateName(dto: House): Promise<House> {
+    return await new Promise(resolve => resolve(dto));
+  }
+
+  async delete(id: string | number, userId: string | number): Promise<void> {
+    await new Promise(resolve => resolve(null));
   }
 }
 
@@ -79,8 +88,9 @@ describe('House Service Unit - getHouseByMemberId', () => {
 });
 
 describe('House Service Unit - updateHouse', () => {
-  const updatedHouse = {
+  const updatedHouse: House = {
     id: 10,
+    userId: 2,
     name: 'another name',
     members: [2, 10, 57],
   };
@@ -103,5 +113,31 @@ describe('House Service Unit - updateHouse', () => {
     const { sut } = makeSut();
     const result = await sut.updateHouse(updatedHouse);
     expect(result).toEqual(updatedHouse);
+  });
+});
+
+describe('House Service Unit - deleteHouse', () => {
+  const deleteHouse = {
+    id: 10,
+    userId: 2,
+  };
+
+  test('Should throw if repo throws', async() => {
+    const { sut, repoSut } = makeSut();
+    jest.spyOn(repoSut, 'delete').mockReturnValueOnce(new Promise((resolve, reject) => reject(new Error())));
+    const promise = sut.deleteHouse(deleteHouse.id, deleteHouse.userId);
+    await expect(promise).rejects.toThrow();
+  });
+
+  test('Should call delete with correct data', async() => {
+    const { sut, repoSut } = makeSut();
+    const repoSpy = jest.spyOn(repoSut, 'delete');
+    await sut.deleteHouse(deleteHouse.id, deleteHouse.userId);
+    expect(repoSpy).toBeCalledWith(deleteHouse.id, deleteHouse.userId);
+  });
+
+  test('Should delete', async() => {
+    const { sut } = makeSut();
+    await sut.deleteHouse(deleteHouse.id, deleteHouse.userId);
   });
 });
