@@ -27,6 +27,10 @@ class HouseServiceSut implements HouseService {
   async updateHouse(house: House): Promise<House> {
     return await new Promise(resolve => resolve(house));
   }
+
+  async deleteHouse(id: string | number): Promise<void> {
+    await new Promise(resolve => resolve(null));
+  }
 }
 
 const makeSut = (): SutType => {
@@ -140,5 +144,30 @@ describe('House Controller Unit - PUT', () => {
     const response = await sut.put({ body: updatedHouse });
     expect(response.status).toBe(200);
     expect(response.body).toEqual(updatedHouse);
+  });
+});
+
+describe('House Controller Unit - DELETE', () => {
+  test('Should call deleteHouse with correct data', async() => {
+    const { sut, serviceSut } = makeSut();
+    const id = 5;
+    const serviceSpy = jest.spyOn(serviceSut, 'deleteHouse');
+    await sut.delete({ body: { id } });
+    expect(serviceSpy).toBeCalledWith(id);
+  });
+
+  test('Should return 500 if service throws', async() => {
+    const { sut, serviceSut } = makeSut();
+    const id = 5;
+    jest.spyOn(serviceSut, 'deleteHouse').mockReturnValueOnce(new Promise((resolve, reject) => reject(new Error())));
+    const response = await sut.delete({ body: { id } });
+    expect(response.status).toBe(500);
+  });
+
+  test('Should return 200', async() => {
+    const { sut } = makeSut();
+    const id = 5;
+    const response = await sut.delete({ body: { id } });
+    expect(response.status).toBe(200);
   });
 });

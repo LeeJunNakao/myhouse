@@ -12,6 +12,21 @@ export class HouseController extends Controller {
     this.service = service;
   }
 
+  async delete(httpRequest: HttpRequest): Promise<HttpResponse> {
+    try {
+      const { id } = httpRequest.body;
+
+      await this.service.deleteHouse(id);
+
+      return {
+        status: 200,
+        body: null,
+      };
+    } catch {
+      return serverError();
+    }
+  }
+
   async put(httpRequest: HttpRequest): Promise<HttpResponse> {
     try {
       const { body } = httpRequest;
