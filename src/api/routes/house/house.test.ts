@@ -131,3 +131,64 @@ describe('House route - GET', () => {
       });
   });
 });
+
+describe('House route - PUT', () => {
+  const createData = {
+    id: null,
+    name: 'Casa Principal',
+    members: [17, 3],
+  };
+
+  const updateData = {
+    name: 'Apartamento',
+    members: [17],
+  };
+
+  beforeAll(async() => await truncateDatabase());
+  afterEach(async() => await truncateDatabase());
+
+  test('Should return 200', async() => {
+    await request(app)
+      .post('/house')
+      .set('token', token)
+      .send(createData)
+      .then(response => {
+        const { id } = response.body;
+        createData.id = id;
+      });
+
+    await request(app)
+      .put(`/house/${createData.id}`)
+      .set('token', token)
+      .send(updateData)
+      .then(response => {
+        const { body } = response;
+        expect(body).toEqual({ ...updateData, id: createData.id, userId: user.id });
+      });
+  });
+
+  test('Should return 404 if house id is not provided', async() => {
+    await request(app)
+      .post('/house')
+      .set('token', token)
+      .send(createData);
+
+    await request(app)
+      .put('/house')
+      .set('token', token)
+      .send(updateData)
+      .expect(404);
+  });
+
+  test('Should return 400 if no data is provided', async() => {
+    await request(app)
+      .post('/house')
+      .set('token', token)
+      .send(createData);
+
+    await request(app)
+      .put(`/house/${createData.id}`)
+      .set('token', token)
+      .expect(400);
+  });
+});
