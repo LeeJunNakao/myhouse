@@ -90,3 +90,27 @@ describe('House Repository - get', () => {
     expect(houses).toContainEqual(house2);
   });
 });
+
+describe('House Repository - delete', () => {
+  beforeAll(async() => await truncateDatabase());
+  afterEach(async() => await truncateDatabase());
+
+  test('Should delete successfully', async() => {
+    const repo = new HouseRepository();
+    const { id, userId } = await repo.create(createHouseDto);
+    const houses = await repo.get(userId);
+    expect(houses.length).toBeGreaterThan(0);
+    await repo.delete(id, userId);
+    const houses2 = await repo.get(userId);
+    expect(houses2.length).toBe(0);
+  });
+
+  test('Should throws if a not owner tries to delete', async() => {
+    const repo = new HouseRepository();
+    const createdHouse = await repo.create(createHouseDto);
+    const houses = await repo.get(createdHouse.userId);
+    expect(houses.length).toBeGreaterThan(0);
+    const promise = repo.delete(createdHouse.id, 999);
+    await expect(promise).rejects.toThrow();
+  });
+});
