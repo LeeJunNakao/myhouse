@@ -19,6 +19,7 @@ export interface CreatePurchaseDto {
 
 export interface UpdatePurchaseDto {
   id: Purchase['id'],
+  userId: Purchase['userId'],
   date: Purchase['date'],
   description: Purchase['description'],
   value: Purchase['value'],

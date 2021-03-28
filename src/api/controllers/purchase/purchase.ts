@@ -1,6 +1,6 @@
 import Controller from '../GenericController';
 import { HttpRequest, HttpResponse } from '../../protocols';
-import { serverError, missingFieldsError } from '../../helper/handleError';
+import { serverError, missingFieldsError, notAuthorizedError } from '../../helper/handleError';
 import { MissingFieldsError } from '../../errors';
 import { PurchaseService } from '../../../domain/services/purchase';
 
@@ -17,11 +17,10 @@ export class PurchaseController extends Controller {
       const { body } = httpRequest;
 
       this.verifyRequiredFields(body, ['userId', 'houseId', 'date', 'description', 'value']);
-
       const purchase = await this.service.create({ userId: body.userId, houseId: body.houseId, date: body.date, description: body.description, value: body.value });
 
       return {
-        status: 200,
+        status: 201,
         body: purchase,
       };
     } catch (error) {
@@ -34,8 +33,8 @@ export class PurchaseController extends Controller {
     try {
       const { body } = httpRequest;
       const { userId, houseId } = body;
-      this.verifyRequiredFields(body, ['userId', 'houseId']);
 
+      this.verifyRequiredFields(body, ['userId', 'houseId']);
       const purchases = await this.service.get(userId, houseId);
 
       return {
@@ -51,17 +50,37 @@ export class PurchaseController extends Controller {
   async put(httpRequest: HttpRequest): Promise<HttpResponse> {
     try {
       const { body } = httpRequest;
-      const { id, date, description, value } = body;
-      this.verifyRequiredFields(body, ['id', 'date', 'description', 'value']);
+      const { id, date, description, value, userId } = body;
 
-      const purchase = await this.service.update({ id, date, description, value });
+      this.verifyRequiredFields(body, ['id', 'date', 'description', 'value', 'userId']);
+      const purchase = await this.service.update({ id, date, description, value, userId });
 
       return {
-        status: 200,
+        status: 201,
         body: purchase,
       };
     } catch (error) {
       if (error instanceof MissingFieldsError) return missingFieldsError(error.fields);
+      if (error.typeError === 'database') return notAuthorizedError();
+      return serverError();
+    }
+  }
+
+  async delete(httpRequest: HttpRequest): Promise<HttpResponse> {
+    try {
+      const { body } = httpRequest;
+      const { id, userId } = body;
+
+      this.verifyRequiredFields(body, ['id', 'userId']);
+      await this.service.delete(id, userId);
+
+      return {
+        status: 200,
+        body: null,
+      };
+    } catch (error) {
+      if (error instanceof MissingFieldsError) return missingFieldsError(error.fields);
+      if (error.typeError === 'database') return notAuthorizedError();
       return serverError();
     }
   }
