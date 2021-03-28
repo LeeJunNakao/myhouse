@@ -1,6 +1,6 @@
-import { HouseService as IHouseService } from '../protocols/services';
-import { CreateHouseDto, House } from '../House';
-import { HouseRepository } from '../../database/protocols';
+import { HouseService as IHouseService } from '../../protocols/services';
+import { CreateHouseDto, House } from '../../House';
+import { HouseRepository } from '../../../database/protocols';
 
 export class HouseService implements IHouseService {
   private readonly repo: HouseRepository;

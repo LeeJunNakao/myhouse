@@ -1,6 +1,6 @@
 import { HouseService } from './house';
-import { HouseRepository as IHouseRepository } from '../../database/protocols';
-import { CreateHouseDto, House } from '../House';
+import { HouseRepository as IHouseRepository } from '../../../database/protocols';
+import { CreateHouseDto, House } from '../../House';
 
 const createHouse: CreateHouseDto = {
   userId: 1,

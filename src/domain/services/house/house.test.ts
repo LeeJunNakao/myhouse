@@ -1,6 +1,6 @@
-import { HouseRepository } from '../../database/repositories/house-repo';
-import { CreateHouseDto } from '../../domain/House';
-import { truncateDatabase } from '../../database/helpers/query-helper';
+import { HouseRepository } from '../../../database/repositories/house-repo';
+import { CreateHouseDto } from '../../../domain/House';
+import { truncateDatabase } from '../../../database/helpers/query-helper';
 import { HouseService } from './house';
 
 const createHouseDto: CreateHouseDto = {

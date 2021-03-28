@@ -88,11 +88,6 @@ export class HouseController extends Controller {
     }
   }
 
-  private verifyRequiredFields(body: object, requiredFields: string[]): void {
-    const missingFields = requiredFields.filter(reqField => !body[reqField]);
-    if (missingFields.length) throw new MissingFieldsError(missingFields);
-  }
-
   private parseMembers(body: any): number[] | string[] {
     const { members, userId } = body;
 

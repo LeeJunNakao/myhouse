@@ -2,9 +2,24 @@ import { House } from './House';
 
 export interface Purchase {
   id: Number | String,
-  member: Number | String,
+  userId: Number | String,
   houseId: House['id'],
   date: Date,
   description: String,
   value: Number,
+}
+
+export interface CreatePurchaseDto {
+  userId: Purchase['userId'],
+  houseId: Purchase['houseId'],
+  date: Purchase['date'],
+  description: Purchase['description'],
+  value: Purchase['value'],
+}
+
+export interface UpdatePurchaseDto {
+  id: Purchase['id'],
+  date: Purchase['date'],
+  description: Purchase['description'],
+  value: Purchase['value'],
 }

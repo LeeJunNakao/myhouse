@@ -1,5 +1,5 @@
 import { HouseController } from './house';
-import { mountHouseService } from '../../../domain/services';
+import { mountHouseService } from '../../../domain/services/house';
 import Controller from '../GenericController';
 
 export const mountHouse = (): Controller => {
