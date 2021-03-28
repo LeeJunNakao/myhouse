@@ -153,3 +153,17 @@ describe('House Controller Integration - PUT', () => {
     expect(response.body.members).toEqual(createHouseData.members);
   });
 });
+
+describe('House Controller Integration - DELETE', () => {
+  beforeAll(async() => await truncateDatabase());
+  afterEach(async() => await truncateDatabase());
+
+  test('Should delete succesfully', async() => {
+    const sut = mountHouse();
+    const createdHouse = await sut.post({ body: { ...createHouseData, userId } });
+    const { id } = createdHouse.body;
+    await sut.delete({ body: { id, userId } });
+    const { body: houses } = await sut.get({ body: { userId } });
+    expect(houses.length).toBe(0);
+  });
+});

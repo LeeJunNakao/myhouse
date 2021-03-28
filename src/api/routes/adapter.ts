@@ -3,7 +3,7 @@ import { Controller, HttpRequest } from '../protocols';
 
 export const routeAdapter = (controller: Controller) => {
   return async(req: Request, res: Response) => {
-    const httpRequest: HttpRequest = { body: { ...req.body, ...req.params } };
+    const httpRequest: HttpRequest = { body: { ...req.params, ...req.body } };
     if (req.method === 'GET') {
       const { status, body } = await controller.get(httpRequest);
       res.status(status).send(body);
