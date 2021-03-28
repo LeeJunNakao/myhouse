@@ -18,8 +18,8 @@ export class HouseRepository implements IHouseRepository {
     };
   }
 
-  async get(memberId: Number | String): Promise<House[]> {
-    const query = `SELECT *  FROM house WHERE '${memberId}' = ANY(members)`;
+  async get(userId: Number | String): Promise<House[]> {
+    const query = `SELECT *  FROM house WHERE '${userId}' = ANY(members)`;
     const { rows } = await pg.query(query, null);
     const houses = rows.map((h: any) => ({ id: h.id, name: h.name, members: h.members, userId: h.userId }));
     return houses;

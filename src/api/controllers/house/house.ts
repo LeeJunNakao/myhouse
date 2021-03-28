@@ -14,9 +14,9 @@ export class HouseController extends Controller {
 
   async delete(httpRequest: HttpRequest): Promise<HttpResponse> {
     try {
-      const { id } = httpRequest.body;
+      const { id, userId } = httpRequest.body;
 
-      await this.service.deleteHouse(id);
+      await this.service.deleteHouse(id, userId);
 
       return {
         status: 200,
@@ -51,7 +51,7 @@ export class HouseController extends Controller {
       const { userId } = httpRequest.body;
 
       this.verifyUserId(httpRequest.body);
-      const houses = await this.service.getHouseByMemberId(userId);
+      const houses = await this.service.getHouseByUserId(userId);
 
       return {
         status: 200,

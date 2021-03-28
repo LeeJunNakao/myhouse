@@ -14,8 +14,8 @@ export class HouseService implements IHouseService {
     return result;
   }
 
-  async getHouseByMemberId(memberId: number | string): Promise<House[]> {
-    const result = await this.repo.get(memberId);
+  async getHouseByUserId(userId: number | string): Promise<House[]> {
+    const result = await this.repo.get(userId);
     return result;
   }
 

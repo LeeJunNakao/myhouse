@@ -20,7 +20,7 @@ class HouseServiceSut implements HouseService {
     return await new Promise(resolve => resolve({ id: 10, name: house.name, members: house.members, userId: house.userId }));
   }
 
-  async getHouseByMemberId(memberId: number | string): Promise<House[]> {
+  async getHouseByUserId(userId: number | string): Promise<House[]> {
     return await new Promise(resolve => resolve([{ id: 10, name: house.name, members: house.members, userId: house.userId }]));
   }
 
@@ -86,14 +86,14 @@ describe('House Controller Unit - GET', () => {
 
   test('Should return 500 if service throws', async() => {
     const { sut, serviceSut } = makeSut();
-    jest.spyOn(serviceSut, 'getHouseByMemberId').mockReturnValueOnce(new Promise((resolve, reject) => reject(new Error())));
+    jest.spyOn(serviceSut, 'getHouseByUserId').mockReturnValueOnce(new Promise((resolve, reject) => reject(new Error())));
     const response = await sut.get({ body: { userId } });
     expect(response).toEqual(serverError());
   });
 
-  test('Should call getHouseByMemberId with correct data', async() => {
+  test('Should call getHouseByUserId with correct data', async() => {
     const { sut, serviceSut } = makeSut();
-    const serviceSpy = jest.spyOn(serviceSut, 'getHouseByMemberId');
+    const serviceSpy = jest.spyOn(serviceSut, 'getHouseByUserId');
     await sut.get({ body: { userId } });
     expect(serviceSpy).toBeCalledWith(userId);
   });
@@ -151,9 +151,10 @@ describe('House Controller Unit - DELETE', () => {
   test('Should call deleteHouse with correct data', async() => {
     const { sut, serviceSut } = makeSut();
     const id = 5;
+    const userId = 1;
     const serviceSpy = jest.spyOn(serviceSut, 'deleteHouse');
-    await sut.delete({ body: { id } });
-    expect(serviceSpy).toBeCalledWith(id);
+    await sut.delete({ body: { id, userId } });
+    expect(serviceSpy).toBeCalledWith(id, userId);
   });
 
   test('Should return 500 if service throws', async() => {

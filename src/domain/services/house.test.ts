@@ -32,7 +32,7 @@ describe('House Repository', () => {
     const houseDto2 = { name: 'Apartamento', members: [userId, 88, 185] };
     const createdHouse1 = await sut.createHouse({ ...houseDto1, userId });
     const createdHouse2 = await sut.createHouse({ ...houseDto2, userId });
-    const houses = await sut.getHouseByMemberId(userId);
+    const houses = await sut.getHouseByUserId(userId);
 
     expect(houses.length).toEqual(2);
     expect(houses).toContainEqual(createdHouse1);
@@ -45,5 +45,13 @@ describe('House Repository', () => {
     const updateData = { ...createHouseDto, id, name: 'Apartamento' };
     const house = await sut.updateHouse(updateData);
     expect(house).toEqual({ ...updateData });
+  });
+
+  test('Should delete house succesfully', async() => {
+    const sut = makeSut();
+    const { id, userId } = await sut.createHouse(createHouseDto);
+    await sut.deleteHouse(id, userId);
+    const houses = await sut.getHouseByUserId(userId);
+    expect(houses.length).toBe(0);
   });
 });
