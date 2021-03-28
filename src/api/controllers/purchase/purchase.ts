@@ -15,8 +15,9 @@ export class PurchaseController extends Controller {
   async post(httpRequest: HttpRequest): Promise<HttpResponse> {
     try {
       const { body } = httpRequest;
+      const requiredFields = ['userId', 'houseId', 'date', 'description', 'value'];
 
-      this.verifyRequiredFields(body, ['userId', 'houseId', 'date', 'description', 'value']);
+      this.verifyRequiredFields(body, requiredFields);
       const purchase = await this.service.create({ userId: body.userId, houseId: body.houseId, date: body.date, description: body.description, value: body.value });
 
       return {
@@ -33,8 +34,9 @@ export class PurchaseController extends Controller {
     try {
       const { body } = httpRequest;
       const { userId, houseId } = body;
+      const requiredFields = ['userId', 'houseId'];
 
-      this.verifyRequiredFields(body, ['userId', 'houseId']);
+      this.verifyRequiredFields(body, requiredFields);
       const purchases = await this.service.get(userId, houseId);
 
       return {
@@ -51,8 +53,9 @@ export class PurchaseController extends Controller {
     try {
       const { body } = httpRequest;
       const { id, date, description, value, userId } = body;
+      const requiredFields = ['id', 'date', 'description', 'value', 'userId'];
 
-      this.verifyRequiredFields(body, ['id', 'date', 'description', 'value', 'userId']);
+      this.verifyRequiredFields(body, requiredFields);
       const purchase = await this.service.update({ id, date, description, value, userId });
 
       return {
@@ -70,9 +73,10 @@ export class PurchaseController extends Controller {
     try {
       const { body } = httpRequest;
       const { id, userId } = body;
+      const requiredFields = ['id', 'userId'];
 
-      this.verifyRequiredFields(body, ['id', 'userId']);
-      await this.service.delete(id, userId);
+      this.verifyRequiredFields(body, requiredFields);
+      await this.service.delete(userId, id);
 
       return {
         status: 200,

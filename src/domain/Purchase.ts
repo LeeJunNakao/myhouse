@@ -4,7 +4,7 @@ export interface Purchase {
   id: Number | String,
   userId: Number | String,
   houseId: House['id'],
-  date: Date,
+  date: Number,
   description: String,
   value: Number,
 }
