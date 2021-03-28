@@ -192,3 +192,54 @@ describe('House route - PUT', () => {
       .expect(400);
   });
 });
+
+describe('House route - DELETE', () => {
+  const createData = {
+    id: null,
+    name: 'Casa Principal',
+    members: [17, 3],
+  };
+
+  beforeAll(async() => await truncateDatabase());
+  afterEach(async() => await truncateDatabase());
+
+  test('Should return 200 if deleted', async() => {
+    await request(app)
+      .post('/house')
+      .set('token', token)
+      .send(createData)
+      .then(response => {
+        const { id } = response.body;
+        createData.id = id;
+      });
+
+    await request(app)
+      .delete(`/house/${createData.id}`)
+      .set('token', token)
+      .expect(200);
+
+    await request(app)
+      .get('/house')
+      .set('token', token)
+      .then(response => {
+        const { body } = response;
+        expect(body.length).toBe(0);
+      });
+  });
+
+  test('Should return 404 if id is not provided', async() => {
+    await request(app)
+      .post('/house')
+      .set('token', token)
+      .send(createData)
+      .then(response => {
+        const { id } = response.body;
+        createData.id = id;
+      });
+
+    await request(app)
+      .delete('/house')
+      .set('token', token)
+      .expect(404);
+  });
+});
