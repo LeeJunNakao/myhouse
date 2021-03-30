@@ -2,7 +2,7 @@ import Controller from '../GenericController';
 import { HttpRequest, HttpResponse } from '../../protocols';
 import { serverError, missingFieldsError, notAuthorizedError } from '../../helper/handleError';
 import { MissingFieldsError } from '../../errors';
-import { PurchaseService } from '../../../domain/services/purchase';
+import { PurchaseService } from '../../../domain/protocols/services';
 
 export class PurchaseController extends Controller {
   private readonly service: PurchaseService;
