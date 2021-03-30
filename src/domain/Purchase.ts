@@ -1,12 +1,12 @@
 import { House } from './House';
 
 export interface Purchase {
-  id: Number | String,
-  userId: Number | String,
+  id: number | string,
+  userId: number | string,
   houseId: House['id'],
-  date: Number,
-  description: String,
-  value: Number,
+  date: number,
+  description: string,
+  value: number,
 }
 
 export interface CreatePurchaseDto {

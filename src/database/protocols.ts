@@ -11,7 +11,7 @@ export interface HouseRepository {
 
 export interface PurchaseRepository {
   create: (dto: CreatePurchaseDto) => Promise<Purchase>,
-  get: (userId: number | string, houseId: number | string) => Promise<Purchase[]>,
+  get: (id: number | string, userId: number | string) => Promise<Purchase[]>,
   update: (dto: UpdatePurchaseDto) => Promise<Purchase>,
   delete: (id: string | number, userId: string | number) => Promise<void>,
 }
