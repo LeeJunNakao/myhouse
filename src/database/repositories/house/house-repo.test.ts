@@ -1,6 +1,6 @@
-import { HouseRepository } from './house-repo';
-import { CreateHouseDto } from '../../domain/House';
-import { truncateDatabase } from '../helpers/query-helper';
+import { HouseRepository } from '../house/house-repo';
+import { CreateHouseDto } from '../../../domain/House';
+import { truncateDatabase } from '../../helpers/query-helper';
 
 const createHouseDto: CreateHouseDto = {
   name: 'Casa de alguém',

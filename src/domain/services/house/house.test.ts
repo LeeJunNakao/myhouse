@@ -1,4 +1,4 @@
-import { HouseRepository } from '../../../database/repositories/house-repo';
+import { HouseRepository } from '../../../database/repositories/house/house-repo';
 import { CreateHouseDto } from '../../../domain/House';
 import { truncateDatabase } from '../../../database/helpers/query-helper';
 import { HouseService } from './house';

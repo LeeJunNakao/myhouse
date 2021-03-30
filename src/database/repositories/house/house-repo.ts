@@ -1,7 +1,7 @@
-import { HouseRepository as IHouseRepository } from '../protocols';
-import { CreateHouseDto, House } from '../../domain/House';
-import pg from '../helpers/connect-helper';
-import { NotMatchedError } from '../errors';
+import { HouseRepository as IHouseRepository } from '../../protocols';
+import { CreateHouseDto, House } from '../../../domain/House';
+import pg from '../../helpers/connect-helper';
+import { NotMatchedError } from '../../errors';
 
 export class HouseRepository implements IHouseRepository {
   async create(dto: CreateHouseDto): Promise<House> {
