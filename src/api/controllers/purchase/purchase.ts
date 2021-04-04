@@ -26,6 +26,7 @@ export class PurchaseController extends Controller {
       };
     } catch (error) {
       if (error instanceof MissingFieldsError) return missingFieldsError(error.fields);
+      if (error.typeError === 'database') return notAuthorizedError();
       return serverError();
     }
   }
@@ -76,7 +77,7 @@ export class PurchaseController extends Controller {
       const requiredFields = ['id', 'userId'];
 
       this.verifyRequiredFields(body, requiredFields);
-      await this.service.delete(userId, id);
+      await this.service.delete(id, userId);
 
       return {
         status: 200,

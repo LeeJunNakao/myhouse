@@ -1,5 +1,5 @@
 import { PurchaseController } from './purchase';
-import { PurchaseService as IPurchaseService } from '../../../domain/services/purchase';
+import { PurchaseService as IPurchaseService } from '../../../domain/protocols/services';
 import { Purchase, CreatePurchaseDto, UpdatePurchaseDto } from '../../../domain/Purchase';
 import { serverError, missingFieldsError, notAuthorizedError } from '../../helper/handleError';
 
@@ -13,6 +13,8 @@ const purchaseDto: Purchase = {
 };
 
 class PurchaseService implements IPurchaseService {
+  private readonly repo;
+
   async create(dto: CreatePurchaseDto): Promise<Purchase> {
     return await new Promise(resolve => resolve({ ...purchaseDto, value: Number(purchaseDto.value) / 100 }));
   }
@@ -25,7 +27,7 @@ class PurchaseService implements IPurchaseService {
     return await new Promise(resolve => resolve({ ...purchaseDto, ...dto, value: Number(dto.value) / 100 }));
   }
 
-  async delete(userId: String | Number, houseId: String | Number): Promise<void> {
+  async delete(id: String | Number, houseId: String | Number): Promise<void> {
     return await new Promise(resolve => resolve());
   }
 }
@@ -237,7 +239,7 @@ describe('Purchase Controller Unit - DELETE', () => {
     const serviceSpy = jest.spyOn(serviceSut, 'delete');
 
     await sut.delete(httpRequest);
-    expect(serviceSpy).toHaveBeenCalledWith(userId, id);
+    expect(serviceSpy).toHaveBeenCalledWith(id, userId);
   });
 
   test('Should return 200', async() => {
