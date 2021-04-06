@@ -33,6 +33,10 @@ const makeSut = (): SutTypes => {
   return { sut, houseSut };
 };
 
+const formatPurchase = (purchase): any => {
+  return { ...purchase, value: purchase.value / 100 };
+};
+
 const createHouse = async(payload = house): Promise<House> => {
   const { houseSut } = makeSut();
   const httpResponse = await houseSut.post({ body: payload });
@@ -68,7 +72,7 @@ describe('Purchase Controller Integration - POST', () => {
     const { id: houseId } = await createHouse();
     const httpResponse = await sut.post({ body: { ...purchase, houseId } });
     expect(httpResponse.status).toBe(201);
-    expect(httpResponse.body).toEqual({ ...purchase, houseId, id: httpResponse.body.id });
+    expect(httpResponse.body).toEqual(formatPurchase({ ...purchase, houseId, id: httpResponse.body.id }));
   });
 });
 
@@ -115,7 +119,7 @@ describe('Purchase Controller Integration - GET', () => {
     await Promise.all(promises);
     const httpResponse = await sut.get({ body: { userId, houseId } });
     expect(httpResponse.body.length).toBe(3);
-    expect(httpResponse.body).toEqual(purchases);
+    expect(httpResponse.body).toEqual(purchases.map(p => formatPurchase(p)));
   });
 
   test('Should not return purchases of a house that user is not member', async() => {
@@ -158,7 +162,7 @@ describe('Purchase Controller Integration - PUT', () => {
     const { body: createdPurchase } = await sut.post({ body: { ...purchase, houseId } });
     const httpResponse = await sut.put({ body: { ...createdPurchase, ...updatePurchase } });
     expect(httpResponse.status).toBe(201);
-    expect(httpResponse.body).toEqual({ ...createdPurchase, ...updatePurchase });
+    expect(httpResponse.body).toEqual(formatPurchase({ ...createdPurchase, ...updatePurchase }));
   });
 });
 

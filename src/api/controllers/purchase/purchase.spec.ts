@@ -16,15 +16,15 @@ class PurchaseService implements IPurchaseService {
   private readonly repo;
 
   async create(dto: CreatePurchaseDto): Promise<Purchase> {
-    return await new Promise(resolve => resolve({ ...purchaseDto, value: Number(purchaseDto.value) / 100 }));
+    return await new Promise(resolve => resolve({ ...purchaseDto }));
   }
 
   async get(userId: String | Number, houseId: String | Number): Promise<Purchase[]> {
-    return await new Promise(resolve => resolve([{ ...purchaseDto, value: Number(purchaseDto.value) / 100 }]));
+    return await new Promise(resolve => resolve([{ ...purchaseDto }]));
   }
 
   async update(dto: UpdatePurchaseDto): Promise<Purchase> {
-    return await new Promise(resolve => resolve({ ...purchaseDto, ...dto, value: Number(dto.value) / 100 }));
+    return await new Promise(resolve => resolve({ ...purchaseDto, ...dto }));
   }
 
   async delete(id: String | Number, houseId: String | Number): Promise<void> {

@@ -22,7 +22,7 @@ export class PurchaseController extends Controller {
 
       return {
         status: 201,
-        body: purchase,
+        body: this.parsePurchase(purchase),
       };
     } catch (error) {
       if (error instanceof MissingFieldsError) return missingFieldsError(error.fields);
@@ -42,7 +42,7 @@ export class PurchaseController extends Controller {
 
       return {
         status: 200,
-        body: purchases,
+        body: purchases.map(purchase => this.parsePurchase(purchase)),
       };
     } catch (error) {
       if (error instanceof MissingFieldsError) return missingFieldsError(error.fields);
@@ -61,7 +61,7 @@ export class PurchaseController extends Controller {
 
       return {
         status: 201,
-        body: purchase,
+        body: this.parsePurchase(purchase),
       };
     } catch (error) {
       if (error instanceof MissingFieldsError) return missingFieldsError(error.fields);
@@ -88,5 +88,9 @@ export class PurchaseController extends Controller {
       if (error.typeError === 'database') return notAuthorizedError();
       return serverError();
     }
+  }
+
+  private parsePurchase(purchase): any {
+    return { ...purchase, value: purchase.value / 100 };
   }
 }
