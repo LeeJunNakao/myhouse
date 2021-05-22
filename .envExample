@@ -1,0 +1,7 @@
+PGUSER=user
+PGHOST=host
+PGPASSWORD=password
+PGDATABASE=name
+PGPORT=9999
+JWT_KEY=somesecretkey
+PORT=1111
