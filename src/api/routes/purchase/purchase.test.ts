@@ -22,7 +22,7 @@ const purchase = {
   value: 5043,
 };
 
-const token = jwt.sign(user, process.env.JWT_KEY ?? 'secret_key');
+const token = jwt.sign({ data: user }, process.env.JWT_KEY ?? 'secret_key');
 
 const formatPurchase = (purchase): any => {
   return { ...purchase, value: purchase.value / 100 };
@@ -38,7 +38,10 @@ describe('Purchase route - POST', () => {
       name: 'Maicon',
       email: 'maicon@email.com',
     };
-    const anotherUserToken = jwt.sign(anotherUser, process.env.JWT_KEY ?? 'secret_key');
+    const anotherUserToken = jwt.sign(
+      anotherUser,
+      process.env.JWT_KEY ?? 'secret_key'
+    );
 
     const { body: createdHouse } = await request(app)
       .post('/house')
@@ -66,7 +69,11 @@ describe('Purchase route - POST', () => {
       .send(purchase)
       .expect(201);
 
-    expect(createdPurchase).toEqual({ ...formatPurchase(purchase), id: createdPurchase.id, houseId: createdHouse.id });
+    expect(createdPurchase).toEqual({
+      ...formatPurchase(purchase),
+      id: createdPurchase.id,
+      houseId: createdHouse.id,
+    });
   });
 });
 
@@ -98,7 +105,7 @@ describe('Purchase route - GET', () => {
       .send(houseData)
       .expect(200);
 
-    const promises = purchases.map(async p => {
+    const promises = purchases.map(async(p) => {
       const { body: createdPurchase } = await request(app)
         .post(`/house/${createdHouse.id}/purchase`)
         .set('token', token)
@@ -114,7 +121,12 @@ describe('Purchase route - GET', () => {
       .set('token', token);
 
     expect(foundPurchases.length).toBe(2);
-    purchases.forEach(p => expect(foundPurchases).toContainEqual({ ...formatPurchase(p), houseId: createdHouse.id }));
+    purchases.forEach((p) =>
+      expect(foundPurchases).toContainEqual({
+        ...formatPurchase(p),
+        houseId: createdHouse.id,
+      })
+    );
   });
 });
 
@@ -144,7 +156,15 @@ describe('Purchase route - PUT', () => {
       .set('token', token)
       .send(updatePurchaseData);
 
-    expect(updatedPurchase).toEqual(formatPurchase({ ...purchase, ...updatePurchaseData, houseId: createdHouse.id, id: createdPurchase.id, date: String(updatePurchaseData.date) }));
+    expect(updatedPurchase).toEqual(
+      formatPurchase({
+        ...purchase,
+        ...updatePurchaseData,
+        houseId: createdHouse.id,
+        id: createdPurchase.id,
+        date: String(updatePurchaseData.date),
+      })
+    );
   });
 });
 
@@ -166,7 +186,7 @@ describe('Purchase route - DELETE', () => {
     await request(app)
       .get(`/house/${createdHouse.id}/purchase`)
       .set('token', token)
-      .then(response => {
+      .then((response) => {
         expect(response.body.length).toBe(1);
         expect(response.body).toContainEqual(createdPurchase);
       });

@@ -12,15 +12,17 @@ const token = jwt.sign({ data: userData }, process.env.JWT_KEY ?? 'secret_key');
 
 describe('Auth Middleware - GET', () => {
   test('Should return 401 if token is not provided', async() => {
-    app.get('/test_auth', (req, res) => res.status(200).send({ userId: req.body.userId }));
+    app.get('/test_auth', (req, res) =>
+      res.status(200).send({ userId: req.body.userId })
+    );
 
-    await request(app)
-      .get('/test_auth')
-      .expect(401);
+    await request(app).get('/test_auth').expect(401);
   });
 
   test('Should return 401 if token is invalid', async() => {
-    app.get('/test_auth', (req, res) => res.status(200).send({ userId: req.body.userId }));
+    app.get('/test_auth', (req, res) =>
+      res.status(200).send({ userId: req.body.userId })
+    );
 
     await request(app)
       .get('/test_auth')
@@ -43,15 +45,17 @@ describe('Auth Middleware - GET', () => {
 
 describe('Auth Middleware - POST', () => {
   test('Should return 401 if token is not provided', async() => {
-    app.post('/test_auth', (req, res) => res.status(200).send({ userId: req.body.userId }));
+    app.post('/test_auth', (req, res) =>
+      res.status(200).send({ userId: req.body.userId })
+    );
 
-    await request(app)
-      .post('/test_auth')
-      .expect(401);
+    await request(app).post('/test_auth').expect(401);
   });
 
   test('Should return 401 if token is invalid', async() => {
-    app.post('/test_auth', (req, res) => res.status(200).send({ userId: req.body.userId }));
+    app.post('/test_auth', (req, res) =>
+      res.status(200).send({ userId: req.body.userId })
+    );
 
     await request(app)
       .post('/test_auth')
@@ -60,7 +64,9 @@ describe('Auth Middleware - POST', () => {
   });
 
   test('Should return 200 if token is valid', async() => {
-    app.post('/test_auth', (req, res) => res.status(200).send({ userId: req.body.userId }));
+    app.post('/test_auth', (req, res) =>
+      res.status(200).send({ userId: req.body.userId })
+    );
 
     await request(app)
       .post('/test_auth')
@@ -70,7 +76,9 @@ describe('Auth Middleware - POST', () => {
   });
 
   test('Should not be possible set userId by user', async() => {
-    app.post('/test_auth', (req, res) => res.status(200).send({ userId: req.body.userId }));
+    app.post('/test_auth', (req, res) =>
+      res.status(200).send({ userId: req.body.userId })
+    );
 
     const injectedId = 99;
 
@@ -85,15 +93,17 @@ describe('Auth Middleware - POST', () => {
 
 describe('Auth Middleware - PUT', () => {
   test('Should return 401 if token is not provided', async() => {
-    app.put('/test_auth', (req, res) => res.status(200).send({ userId: req.body.userId }));
+    app.put('/test_auth', (req, res) =>
+      res.status(200).send({ userId: req.body.userId })
+    );
 
-    await request(app)
-      .put('/test_auth')
-      .expect(401);
+    await request(app).put('/test_auth').expect(401);
   });
 
   test('Should return 401 if token is invalid', async() => {
-    app.put('/test_auth', (req, res) => res.status(200).send({ userId: req.body.userId }));
+    app.put('/test_auth', (req, res) =>
+      res.status(200).send({ userId: req.body.userId })
+    );
 
     await request(app)
       .put('/test_auth')
@@ -102,7 +112,9 @@ describe('Auth Middleware - PUT', () => {
   });
 
   test('Should return 200 if token is valid', async() => {
-    app.put('/test_auth', (req, res) => res.status(200).send({ userId: req.body.userId }));
+    app.put('/test_auth', (req, res) =>
+      res.status(200).send({ userId: req.body.userId })
+    );
 
     await request(app)
       .put('/test_auth')
@@ -114,15 +126,17 @@ describe('Auth Middleware - PUT', () => {
 
 describe('Auth Middleware - DELETE', () => {
   test('Should return 401 if token is not provided', async() => {
-    app.delete('/test_auth', (req, res) => res.status(200).send({ userId: req.body.userId }));
+    app.delete('/test_auth', (req, res) =>
+      res.status(200).send({ userId: req.body.userId })
+    );
 
-    await request(app)
-      .delete('/test_auth')
-      .expect(401);
+    await request(app).delete('/test_auth').expect(401);
   });
 
   test('Should return 401 if token is invalid', async() => {
-    app.delete('/test_auth', (req, res) => res.status(200).send({ userId: req.body.userId }));
+    app.delete('/test_auth', (req, res) =>
+      res.status(200).send({ userId: req.body.userId })
+    );
 
     await request(app)
       .delete('/test_auth')
@@ -131,7 +145,9 @@ describe('Auth Middleware - DELETE', () => {
   });
 
   test('Should return 200 if token is valid', async() => {
-    app.delete('/test_auth', (req, res) => res.status(200).send({ userId: req.body.userId }));
+    app.delete('/test_auth', (req, res) =>
+      res.status(200).send({ userId: req.body.userId })
+    );
 
     await request(app)
       .delete('/test_auth')

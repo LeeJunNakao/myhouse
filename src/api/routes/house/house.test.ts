@@ -10,9 +10,10 @@ const user: User = {
   email: 'rosangela@email.com',
 };
 
-const token = jwt.sign(user, process.env.JWT_KEY ?? 'secret_key');
+const token = jwt.sign({ data: user }, process.env.JWT_KEY ?? 'secret_key');
 
-const invalidToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2MTU4Mzg4NjYsImRhdGEiOnsiaWQiOjEsIm5hbWUiOiJBbGV4IExlZSBKdW4gTmFrYW8iLCJlbWFpbCI6ImxlZWp1bi5uYWthb0BnbWFpbC5jb20ifSwiaWF0IjoxNjE1NzUyNDY2fQ.x-taEGF9AZEuHq3OiALnbgVZ1-iFXTonQqy-lm5Bj3A';
+const invalidToken =
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2MTU4Mzg4NjYsImRhdGEiOnsiaWQiOjEsIm5hbWUiOiJBbGV4IExlZSBKdW4gTmFrYW8iLCJlbWFpbCI6ImxlZWp1bi5uYWthb0BnbWFpbC5jb20ifSwiaWF0IjoxNjE1NzUyNDY2fQ.x-taEGF9AZEuHq3OiALnbgVZ1-iFXTonQqy-lm5Bj3A';
 
 describe('House route - POST', () => {
   beforeAll(async() => await truncateDatabase());
@@ -45,7 +46,7 @@ describe('House route - POST', () => {
       .set('token', token)
       .send({ ...houseData, members: null })
       .expect(200)
-      .then(response => {
+      .then((response) => {
         const { name, members } = response.body;
         expect(name).toBe(houseData.name);
         expect(members).toEqual([user.id]);
@@ -60,7 +61,7 @@ describe('House route - POST', () => {
       .set('token', token)
       .send({ ...houseData, members: modifiedMembers })
       .expect(200)
-      .then(response => {
+      .then((response) => {
         const { name, members } = response.body;
         expect(name).toBe(houseData.name);
         expect(members).toEqual([...modifiedMembers, user.id]);
@@ -73,7 +74,7 @@ describe('House route - POST', () => {
       .set('token', token)
       .send(houseData)
       .expect(200)
-      .then(response => {
+      .then((response) => {
         const { name, members } = response.body;
         expect(name).toBe(houseData.name);
         expect(members).toEqual(houseData.members);
@@ -100,30 +101,24 @@ describe('House route - GET', () => {
   afterEach(async() => await truncateDatabase());
 
   test('Should return 200', async() => {
-    await request(app)
-      .post('/house')
-      .set('token', token)
-      .send(houses[0]);
+    await request(app).post('/house').set('token', token).send(houses[0]);
 
-    await request(app)
-      .post('/house')
-      .set('token', token)
-      .send(houses[1]);
+    await request(app).post('/house').set('token', token).send(houses[1]);
 
-    await request(app)
-      .post('/house')
-      .set('token', token)
-      .send(houses[2]);
+    await request(app).post('/house').set('token', token).send(houses[2]);
 
     await request(app)
       .get('/house')
       .set('token', token)
-      .then(response => {
+      .then((response) => {
         const { body } = response;
 
-        const fetchedHouses = body.map(({ name, members }) => ({ name, members }));
+        const fetchedHouses = body.map(({ name, members }) => ({
+          name,
+          members,
+        }));
 
-        houses.forEach(house => {
+        houses.forEach((house) => {
           const userId = Number(user.id);
           if (!house.members.includes(userId)) house.members.push(userId);
           expect(fetchedHouses).toContainEqual(house);
@@ -152,7 +147,7 @@ describe('House route - PUT', () => {
       .post('/house')
       .set('token', token)
       .send(createData)
-      .then(response => {
+      .then((response) => {
         const { id } = response.body;
         createData.id = id;
       });
@@ -161,17 +156,18 @@ describe('House route - PUT', () => {
       .put(`/house/${createData.id}`)
       .set('token', token)
       .send(updateData)
-      .then(response => {
+      .then((response) => {
         const { body } = response;
-        expect(body).toEqual({ ...updateData, id: createData.id, userId: user.id });
+        expect(body).toEqual({
+          ...updateData,
+          id: createData.id,
+          userId: user.id,
+        });
       });
   });
 
   test('Should return 404 if house id is not provided', async() => {
-    await request(app)
-      .post('/house')
-      .set('token', token)
-      .send(createData);
+    await request(app).post('/house').set('token', token).send(createData);
 
     await request(app)
       .put('/house')
@@ -181,10 +177,7 @@ describe('House route - PUT', () => {
   });
 
   test('Should return 400 if no data is provided', async() => {
-    await request(app)
-      .post('/house')
-      .set('token', token)
-      .send(createData);
+    await request(app).post('/house').set('token', token).send(createData);
 
     await request(app)
       .put(`/house/${createData.id}`)
@@ -208,7 +201,7 @@ describe('House route - DELETE', () => {
       .post('/house')
       .set('token', token)
       .send(createData)
-      .then(response => {
+      .then((response) => {
         const { id } = response.body;
         createData.id = id;
       });
@@ -221,7 +214,7 @@ describe('House route - DELETE', () => {
     await request(app)
       .get('/house')
       .set('token', token)
-      .then(response => {
+      .then((response) => {
         const { body } = response;
         expect(body.length).toBe(0);
       });
@@ -232,14 +225,11 @@ describe('House route - DELETE', () => {
       .post('/house')
       .set('token', token)
       .send(createData)
-      .then(response => {
+      .then((response) => {
         const { id } = response.body;
         createData.id = id;
       });
 
-    await request(app)
-      .delete('/house')
-      .set('token', token)
-      .expect(404);
+    await request(app).delete('/house').set('token', token).expect(404);
   });
 });
