@@ -8,7 +8,7 @@ const userData = {
   email: 'joao@snow.com.br',
 };
 
-const token = jwt.sign(userData, process.env.JWT_KEY ?? 'secret_key');
+const token = jwt.sign({ data: userData }, process.env.JWT_KEY ?? 'secret_key');
 
 describe('Auth Middleware - GET', () => {
   test('Should return 401 if token is not provided', async() => {
@@ -29,7 +29,9 @@ describe('Auth Middleware - GET', () => {
   });
 
   test('Should return 200 if token is valid', async() => {
-    app.get('/test_auth', (req, res) => res.status(200).send({ userId: req.body.userId }));
+    app.get('/test_auth', (req, res) =>
+      res.status(200).send({ userId: req.body.userId })
+    );
 
     await request(app)
       .get('/test_auth')

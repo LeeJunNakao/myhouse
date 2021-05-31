@@ -6,10 +6,12 @@ export class Jwt implements IJwt {
     const secretKey = process.env.JWT_KEY ?? 'secret_key';
     const decoded: any = jwt.verify(token, secretKey);
 
+    const { id, name, email } = decoded.data;
+
     return {
-      id: decoded.id,
-      name: decoded.name,
-      email: decoded.email,
+      id,
+      name,
+      email,
     };
   }
 }

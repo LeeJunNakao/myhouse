@@ -1,6 +1,10 @@
 import Controller from '../GenericController';
 import { HttpRequest, HttpResponse } from '../../protocols';
-import { serverError, missingFieldsError, notAuthorizedError } from '../../helper/handleError';
+import {
+  serverError,
+  missingFieldsError,
+  notAuthorizedError
+} from '../../helper/handleError';
 import { MissingFieldsError } from '../../errors';
 import { HouseService } from '../../../domain/protocols/services';
 
@@ -33,7 +37,12 @@ export class HouseController extends Controller {
       const { id, name, userId, members } = body;
       this.verifyRequiredFields(body, ['id', 'name']);
 
-      const house = await this.service.updateHouse({ id, name, userId, members });
+      const house = await this.service.updateHouse({
+        id,
+        name,
+        userId,
+        members,
+      });
 
       return {
         status: 200,
@@ -41,7 +50,7 @@ export class HouseController extends Controller {
       };
     } catch (error) {
       if (error.typeError === 'database') return notAuthorizedError();
-      if (error instanceof MissingFieldsError) return missingFieldsError(error.fields);
+      if (error instanceof MissingFieldsError) { return missingFieldsError(error.fields); }
       return serverError();
     }
   }
@@ -58,7 +67,7 @@ export class HouseController extends Controller {
         body: houses,
       };
     } catch (error) {
-      if (error instanceof MissingFieldsError) return missingFieldsError(error.fields);
+      if (error instanceof MissingFieldsError) { return missingFieldsError(error.fields); }
       return serverError();
     }
   }
@@ -83,7 +92,7 @@ export class HouseController extends Controller {
         },
       };
     } catch (error) {
-      if (error instanceof MissingFieldsError) return missingFieldsError(error.fields);
+      if (error instanceof MissingFieldsError) { return missingFieldsError(error.fields); }
       return serverError();
     }
   }
