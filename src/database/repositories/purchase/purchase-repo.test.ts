@@ -23,7 +23,7 @@ const purchase = {
 interface SutType {
   sut: PurchaseRepository,
   houseSut: HouseRepository,
-};
+}
 
 const makeSut = (): SutType => {
   const sut = new PurchaseRepository();
@@ -32,7 +32,11 @@ const makeSut = (): SutType => {
   return { sut, houseSut };
 };
 
-const inserter = async(datas: any[], repo: PurchaseRepository | HouseRepository, index: number = 0): Promise<void> => {
+const inserter = async(
+  datas: any[],
+  repo: PurchaseRepository | HouseRepository,
+  index: number = 0
+): Promise<void> => {
   if (index <= datas.length - 1) {
     const { id } = await repo.create(datas[index]);
     datas[index].id = id;
@@ -108,8 +112,9 @@ describe('Purchase Repository - get', () => {
     await inserter(purchases, sut);
     const foundPurchases = await sut.get(userId, house.id);
 
-    expect(foundPurchases.length).toBe(purchases.length);
-    purchases.forEach(purchase => expect(foundPurchases).toContainEqual(purchase));
+    purchases.forEach((purchase) => {
+      expect(foundPurchases).toContainEqual(purchase);
+    });
   });
 
   test('Should return only purchases from houses that user is member', async() => {
@@ -183,6 +188,7 @@ describe('Purchase Repository - get', () => {
     await inserter(purchases2, sut);
 
     const userHouses1 = await sut.get(userId1, house1.id);
+
     expect(purchases1.length).not.toBe(purchases2.length);
     expect(userHouses1.length).toBe(purchases1.length);
     expect(userHouses1).toEqual(purchases1);
@@ -197,13 +203,17 @@ describe('Purchase Repository - update', () => {
     description: 'Hirota Food',
     value: 10000,
     date: 1617388109000,
-
   };
   test('Should throws if other user tries to update a purchase', async() => {
     const { sut, houseSut } = makeSut();
     await houseSut.create(house);
     const { id } = await sut.create(purchase);
-    const promise = sut.update({ ...purchase, ...updatePurchase, id, userId: 999 });
+    const promise = sut.update({
+      ...purchase,
+      ...updatePurchase,
+      id,
+      userId: 999,
+    });
     await expect(promise).rejects.toThrow();
   });
 
@@ -211,7 +221,11 @@ describe('Purchase Repository - update', () => {
     const { sut, houseSut } = makeSut();
     await houseSut.create(house);
     const { id } = await sut.create(purchase);
-    const updatedPurchase = await sut.update({ ...purchase, ...updatePurchase, id });
+    const updatedPurchase = await sut.update({
+      ...purchase,
+      ...updatePurchase,
+      id,
+    });
     updatedPurchase.date = Number(updatePurchase.date);
     expect(updatedPurchase).toEqual({ ...purchase, ...updatePurchase, id });
   });
